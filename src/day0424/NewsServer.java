@@ -2,10 +2,13 @@ package day0424;
 
 import java.net.*;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class NewsServer {
 
     private static DatagramSocket datagramSocket;
+    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     public static void main(String[] args) {
 
@@ -31,6 +34,7 @@ public class NewsServer {
 
     private static void stopServer() {
         datagramSocket.close();
+        executorService.shutdownNow();
         System.out.println("[서버] 종료됨");
     }
 
@@ -52,6 +56,7 @@ public class NewsServer {
                         );
                         System.out.println("클라이언트의 희망뉴스 종류를 얻기 위해 대기중");
                         datagramSocket.receive(receivePacket);
+
                         String newsKind = new String(receivePacket.getData(), 0, receivePacket.getLength(), "UTF-8");
 
                         //클라이언트의 IP와 Port 정보가 있는 SocketAddress 얻기
@@ -64,7 +69,7 @@ public class NewsServer {
                             DatagramPacket sendPacket = new DatagramPacket(bytes, 0, bytes.length, socketAddress);
                             datagramSocket.send(sendPacket);
 
-                            Thread.sleep(10000);
+                            Thread.sleep(5000);
                         }
                     }
                 } catch (Exception e) {
