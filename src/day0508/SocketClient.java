@@ -37,7 +37,7 @@ public class SocketClient {
 
     //JSON 받기
     public void receive() {
-        chatServer.threadPool.excute(() -> {
+        chatServer.threadPool.execute(() -> {
             try {
                 while (true) {
 
