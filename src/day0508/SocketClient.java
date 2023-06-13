@@ -19,9 +19,10 @@ public class SocketClient {
     String chatName;
 
     //생성자
-    public SocketClient(ChatServer chatServer, Socket socket) {
-        try {
-            this.chatServer =  chatServer;
+    public SocketClient(ChatServer chatServer , Socket socket) {
+
+        try{
+            this.chatServer = chatServer;
             this.socket = socket;
             this.dis = new DataInputStream(socket.getInputStream());
             this.dos = new DataOutputStream(socket.getOutputStream());
@@ -30,19 +31,19 @@ public class SocketClient {
             this.clientIp = isa.getHostName();
             receive();
 
-        } catch (IOException e) {
+        }catch(IOException e){
 
         }
     }
 
-    //JSON 받기
+    //메소드: JSON 받기
     public void receive() {
         chatServer.threadPool.execute(() -> {
             try {
-                while (true) {
+                while (true)  {
 
-                    //{"command":"incoming", "data":"chatName"}
-                    //{"command":"message", "data":"xxxx"}
+                    //{"command":"incoming","data":"chatName"}
+                    //{"command":"message","data":"xxxx"}
                     String receiveJson = dis.readUTF();
 
                     JSONObject jsonObject = new JSONObject(receiveJson);
@@ -51,7 +52,7 @@ public class SocketClient {
                     switch (command) {
                         case "incoming":
                             this.chatName = jsonObject.getString("data");
-                            chatServer.sendToAll(this, "들어오셨습니다.");
+                            chatServer.sendToAll(this,"들어오셨습니다");
                             chatServer.addSocketClient(this);
                             break;
                         case "message":
@@ -59,29 +60,30 @@ public class SocketClient {
                             chatServer.sendToAll(this, message);
                             break;
                     }
+
                 }
-            } catch (IOException e) {
-                chatServer.sendToAll(this, "나가셨습니다.");
+
+            }catch (IOException e) {
+                chatServer.sendToAll(this,"나가셨습니다.");
                 chatServer.removeSocketClient(this);
+
             }
         });
     }
 
-    //JSON 보내기
+    //메소드: JSON 보내기
     public void send(String json) {
-        try {
+        try{
             dos.writeUTF(json);
             dos.flush();
-        } catch (IOException e) {
-
+        }catch (IOException e) {
         }
     }
 
     public void close() {
-        try {
+        try{
             socket.close();
-        } catch (IOException e) {
-
+        }catch (IOException e){
         }
     }
 }
