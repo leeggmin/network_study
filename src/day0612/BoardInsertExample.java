@@ -33,7 +33,7 @@ public class BoardInsertExample {
             pstmt.setString(2, "함박눈이 내려요.");
             pstmt.setString(3, "winter");
             pstmt.setString(4, "snow.png");
-            pstmt.setString(5, new FileInputStream("파일 경로입력/snow.png"));
+            pstmt.setBlob(5, new FileInputStream("파일 경로입력/snow.png"));
 
             //SQL문 실행
             int rows = pstmt.executeUpdate();
